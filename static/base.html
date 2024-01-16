@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Info Screen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="scoreboard" src=""></iframe>
+
+    <script>
+        let currentIndex = 0;
+        let displayData = [];
+        const iframe = document.getElementById('scoreboard');
+        let loadingContent = false;
+
+        // Initialize WebSocket connection and setup handlers
+        function setupWebSocket() {
+            let socket = new WebSocket("ws://localhost:8000/ws");
+
+            socket.onmessage = function(event) {
+                if (event.data === "update") {
+                    fetchData();
+                }
+            };
+
+            socket.onclose = function(event) {
+                console.error('WebSocket closed unexpectedly');
+                // Attempt to reconnect after a delay
+                setTimeout(setupWebSocket, 5000);
+            };
+
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+        }
+
+        // Fetch data from the server
+        async function fetchData() {
+            try {
+                const response = await fetch('http://localhost:8000/current_assets/');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                displayData = await response.json();
+                currentIndex = 0;
+                updateDisplay();
+            } catch (error) {
+                console.error('Fetch error:', error);
+                // Retry fetching data after a delay
+                setTimeout(fetchData, 5000);
+            }
+        }
+
+        // Update the display with new content
+        function updateDisplay() {
+            if (displayData.length > 0 && !loadingContent) {
+                const item = displayData[currentIndex];
+                let url = item.url;
+                iframe.src = url.includes("loop") ? item.url : `${item.url}?nocache=${new Date().getTime()}`;
+
+                loadingContent = true;
+                iframe.onload = () => {
+                    setTimeout(() => {
+                        currentIndex = (currentIndex + 1) % displayData.length;
+                        loadingContent = false;
+                        updateDisplay();
+                    }, item.timer * 1000);
+                };
+                iframe.onerror = () => {
+                    console.error('Error loading iframe content');
+                    currentIndex = (currentIndex + 1) % displayData.length;
+                    loadingContent = false;
+                    updateDisplay();
+                };
+            }
+        }
+
+        // Initialize WebSocket connection
+        setupWebSocket();
+
+        // Fetch initial data
+        fetchData();
+    </script>
+</body>
+</html>
