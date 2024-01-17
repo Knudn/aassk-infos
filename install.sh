@@ -13,7 +13,7 @@ virtualenv fastapi_app_env
 source fastapi_app_env/bin/activate
 
 # Install FastAPI, Uvicorn, and SQLAlchemy in the virtual environment
-pip install fastapi uvicorn sqlalchemy requests
+pip install fastapi uvicorn sqlalchemy requests uvicorn[standard]
 
 # Deactivate the virtual environment
 deactivate
