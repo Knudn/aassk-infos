@@ -89,7 +89,9 @@ def open_chromium_with_message(file_path):
 
     subprocess.run(["pkill", "firefox"], stderr=subprocess.DEVNULL)
     #subprocess.run(["pkill", "chromium"], stderr=subprocess.DEVNULL)
-    subprocess.run(["rm", "-rf", "~/.test"], stderr=subprocess.DEVNULL)
+    
+    if os.path.isdir("../.test"):
+        os.rmdir("../.test")
 
     # Set the DISPLAY environment variable to use the physical display
     os.environ["DISPLAY"] = ":0"
