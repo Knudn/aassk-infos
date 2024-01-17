@@ -7,5 +7,6 @@ screen -S novnc -d -m ./vnc/novnc_proxy
 if [ ! -d fastapi_app_env ]; then
   ./install.sh
 fi
+source ./fastapi_app_env/bin/activate
 
-screen -S python_app -d -m source ./fastapi_app_env/bin/activate; python main.py
+screen -S python_app -d -m python main.py
