@@ -11,7 +11,7 @@ screen -S python_app -d -m python main.py
 
 if lsb_release -a 2>/dev/null | grep -q 'Distributor ID:\s*Raspbian'; then
     echo "Raspbian detected"
-    screen -S xvnc -d -m x11vnc -display :0 -wait 50 -noxdamage -viewonly -forever
+    screen -S xvnc -d -m x11vnc -display :0 -wait 50 -noxdamage -forever
 
 else
     echo "Not Raspbian"
