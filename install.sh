@@ -4,7 +4,7 @@
 sudo apt-get update
 
 # Install Python 3 and pip
-sudo apt-get install -y python3 python3-pip python3-virtualenv screen firefox-esr x11vnc
+sudo apt-get install -y python3 python3-pip python3-virtualenv screen firefox-esr x11vnc tigervnc-standalone-server tigervnc-common
 
 # Create a virtual environment for the application
 virtualenv fastapi_app_env
